@@ -8,6 +8,7 @@ class mtc_node:
         self.wins = 0
         self.moves = 0
         self.agent_moves = 0
+        self.loses = 0
 
     # def calculate_value(self, wins, moves, agent_moves):
     #     self.wins += wins
@@ -45,7 +46,7 @@ class Agent:
             search_count += 1
 
         try:
-            move = max(move_stats, key=(lambda k: move_stats[k].wins / move_stats[k].moves))
+            move = max(move_stats, key=(lambda k: (move_stats[k].wins - move_stats[k].loses) / move_stats[k].agent_moves))
         except ZeroDivisionError:
             move = max(move_stats, key=(lambda k: move_stats[k].wins))
         return move
@@ -72,6 +73,7 @@ class Agent:
                 did_lose = self.game.make_move(move)
                 move_stats[orig_column].moves += 1
                 if did_lose:
+                    move_stats[orig_column].loses += 1
                     return
 
             self.game.next_turn()
