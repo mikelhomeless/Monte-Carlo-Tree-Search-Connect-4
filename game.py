@@ -38,28 +38,28 @@ class UnionFind:
 class ConnectFour:
     EQUIVALENCY_AXIES = [
         [(-1, 1),  (1, -1)],  # \ Diagonal
-        [(-1, -1), (1, -1)],  # / Diagonal
-        [(-1, 0),  (1, 0)],   # Horizontal axis
-        [(0, -1)]             # Verticle axis
+        [(-1, -1), (1, 1)],   # / Diagonal
+        [(-1, 0),  (1, 0)],   # Horizontal
+        [(0, -1)]             # Verticle
     ]
 
     def __init__(self):
         self.player_eq_set = [UnionFind(49 * 4), UnionFind(49 * 4)]
-        self.__board = [[] for x in range(7)]
+        self.board = [[] for x in range(7)]
         self.current_player = 0
 
     def get_legal_moves(self):
         # If this function returns an empty list, there are no legal moves left; The game is over.
-        return [indx for indx,x in enumerate(self.__board) if len(x) < 7]
+        return [indx for indx,x in enumerate(self.board) if len(x) < 7]
 
     def __check_win(self, column):
         for eq_set_index_offset, axis in enumerate(self.EQUIVALENCY_AXIES):
             for offset in axis:
-                row = len(self.__board[column]) - 1
+                row = len(self.board[column]) - 1
                 offset_coords = (column + offset[0], row + offset[1])
                 offset_is_inbounds = 0 <= offset_coords[0] < 7 and 0 <= offset_coords[1] < 7
                 try:
-                    if offset_is_inbounds and self.__board[offset_coords[0]][offset_coords[1]] == self.current_player:
+                    if offset_is_inbounds and self.board[offset_coords[0]][offset_coords[1]] == self.current_player:
                         size = self.expand_equivalency_set(row, column, offset, eq_set_index_offset)
                         if abs(size) >= 4: return True
                 except IndexError:
@@ -75,7 +75,7 @@ class ConnectFour:
     # Returns whether or not the move resulted in a win
     def make_move(self, column):
         if self.is_valid_move(column):
-            self.__board[column].append(self.current_player)
+            self.board[column].append(self.current_player)
             return self.__check_win(column)
 
     def next_turn(self):
@@ -85,7 +85,7 @@ class ConnectFour:
         if column > 6:
             raise InvalidMoveError(column)
 
-        if len(self.__board[column]) > 6:
+        if len(self.board[column]) > 6:
             raise FullColumnError(column)
 
         return True
